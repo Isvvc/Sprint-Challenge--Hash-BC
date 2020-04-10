@@ -9,6 +9,8 @@ from timeit import default_timer as timer
 
 import random
 
+def hash_digest(value):
+    return hashlib.sha256(str(value).encode()).hexdigest()
 
 def proof_of_work(last_proof):
     """
@@ -21,12 +23,17 @@ def proof_of_work(last_proof):
     """
 
     start = timer()
+    
+    #last_proof_hash = hashlib.sha256(f"{last_proof}".encode()).hexdigest()
+    last_proof_hash = hash_digest(last_proof)
 
     print("Searching for next proof")
-    proof = 0
-    #  TODO: Your code here
+    proof = random.randint(0, sys.maxsize)
+    while not valid_proof(last_proof_hash, proof):
+        proof = random.randint(0, sys.maxsize)
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
+    print(f"Last hash: {last_proof_hash}, proof hash: {hash_digest(proof)}")
     return proof
 
 
@@ -39,8 +46,10 @@ def valid_proof(last_hash, proof):
     IE:  last_hash: ...AE912345, new hash 12345E88...
     """
 
-    # TODO: Your code here!
-    pass
+    #guess = f"{proof}".encode()
+    #guess_hash = hashlib.sha256(guess).hexdigest()
+    guess_hash = hash_digest(proof)
+    return guess_hash[:5] == last_hash[-5:]
 
 
 if __name__ == '__main__':
